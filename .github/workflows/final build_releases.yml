@@ -49,13 +49,13 @@ jobs:
           - arch: x86
             platform: Win32
             cuda_ver_major: 12
-            cuda_ver_minor: 1
-            cuda_download_url: https://developer.download.nvidia.com/compute/cuda/12.1.0/network_installers/cuda_12.1.0_windows_network.exe
+            cuda_ver_minor: 2
+            cuda_download_url: https://developer.download.nvidia.com/compute/cuda/12.2.0/network_installers/cuda_12.2.0_windows_network.exe
           - arch: x64
             platform: x64
             cuda_ver_major: 12
-            cuda_ver_minor: 1
-            cuda_download_url: https://developer.download.nvidia.com/compute/cuda/12.1.0/network_installers/cuda_12.1.0_windows_network.exe
+            cuda_ver_minor: 2
+            cuda_download_url: https://developer.download.nvidia.com/compute/cuda/12.2.0/network_installers/cuda_12.2.0_windows_network.exe
     
     steps:
       - name: Checkout
@@ -85,16 +85,14 @@ jobs:
         run: |
           curl -s -o cuda_installer.exe -L ${{ matrix.cuda_download_url }}
           cuda_installer.exe -s nvcc_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }} cudart_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }} curand_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }} curand_dev_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }} npp_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }} npp_dev_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }} nvml_dev_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }} nvrtc_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }} nvrtc_dev_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }} visual_studio_integration_${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }}
-
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.2
       - name: MSBuild
         run: |
           chcp 932
           set AVISYNTH_SDK=${{ github.workspace }}\..\AviSynthPlus\avs_core
           set VAPOURSYNTH_SDK=${{ github.workspace }}\..\vapoursynth
           set OPENCL_HEADERS=${{ github.workspace }}\..\openclheaders
-          set CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }}
-          if "${{ matrix.cuda_ver_major }}" == "11" set CUDA_PATH_V11_1=%CUDA_PATH%
-          if "${{ matrix.cuda_ver_major }}" == "12" set CUDA_PATH_V12_1=%CUDA_PATH%
+          set CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.2
           msbuild NVEnc.sln /t:build /p:configuration=RelStatic /p:Platform=${{ matrix.platform }} -maxcpucount
 
       - name: Create Archieve
@@ -104,8 +102,8 @@ jobs:
           copy _build\${{ matrix.platform }}\RelStatic\NVEncC*.exe NVEncC_Release
           copy _build\${{ matrix.platform }}\RelStatic\*.dll NVEncC_Release
           copy hdr10plus_gen\hdr10plus_gen.exe NVEncC_Release
-          if "${{ matrix.arch }}" == "x64" copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }}\bin\nvrtc64_*_0.dll" NVEncC_Release
-          if "${{ matrix.arch }}" == "x64" copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }}\bin\nvrtc-builtins64_*.dll" NVEncC_Release
+          if "${{ matrix.arch }}" == "x64" copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.2\bin\nvrtc64_120_0.dll" NVEncC_Release
+          if "${{ matrix.arch }}" == "x64" copy ""C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.2\bin\nvrtc-builtins64_122.dll"" NVEncC_Release
           if "${{ matrix.arch }}" == "x64" copy NVEncNVOFFRUCBin\*.dll NVEncC_Release
           7z a -mx9 NVEncC_${{ needs.get_version_name.outputs.version_name }}_${{ matrix.platform }}.7z .\NVEncC_Release\*
 
@@ -156,8 +154,8 @@ jobs:
           - arch: x86
             platform: Win32
             cuda_ver_major: 12
-            cuda_ver_minor: 1
-            cuda_download_url: https://developer.download.nvidia.com/compute/cuda/12.1.0/network_installers/cuda_12.1.0_windows_network.exe
+            cuda_ver_minor: 2
+            cuda_download_url: https://developer.download.nvidia.com/compute/cuda/12.2.0/network_installers/cuda_12.2.0_windows_network.exe
 
     steps:
       - name: Checkout
@@ -189,9 +187,7 @@ jobs:
           set AVISYNTH_SDK=${{ github.workspace }}\..\AviSynthPlus\avs_core
           set VAPOURSYNTH_SDK=${{ github.workspace }}\..\vapoursynth
           set OPENCL_HEADERS=${{ github.workspace }}\..\openclheaders
-          set CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v${{ matrix.cuda_ver_major }}.${{ matrix.cuda_ver_minor }}
-          if "${{ matrix.cuda_ver_major }}" == "11" set CUDA_PATH_V11_1=%CUDA_PATH%
-          if "${{ matrix.cuda_ver_major }}" == "12" set CUDA_PATH_V12_1=%CUDA_PATH%
+          set CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.2
 
           msbuild NVEnc.sln /t:build /p:configuration=Release /p:Platform=${{ matrix.platform }} -maxcpucount
 
